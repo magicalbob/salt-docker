@@ -1,4 +1,4 @@
-FROM lab-registry.3cbeta.co.uk:5000/redhat7:7.2
+FROM registry.access.redhat.com/rhel7.2
 
 MAINTAINER Ian Ellis
 
