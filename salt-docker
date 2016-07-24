@@ -1,14 +1,20 @@
 #!/bin/bash
 
-USAGE="Usage: $(basename $0) {minion hostname}"
+USAGE="Usage: $(basename $0) {minion hostname} [{path to grains file}]"
 
-if [ $# -ne 1 ]
+if [ $# -lt 1 ] || [ $# -gt 2 ] 
 then
   echo ${USAGE}
   exit -1
 fi
 
 MINION_HOSTNAME=${1}
+
+MINION_GRAINS=""
+if [ $# -gt 1 ]
+then
+  MINION_GRAINS="-v ${2}:/etc/salt/grains"
+fi
 
 echo "Make sure salt master and minion are not running"
 docker rm -f salt minion 2>/dev/null
@@ -35,8 +41,9 @@ done
 echo ''
 
 echo "Start Salt Minion ${MINION_HOSTNAME}"
-docker run --rm --name minion         \
-                -h ${MINION_HOSTNAME} \
+docker run --rm --name minion                                  \
+                -h ${MINION_HOSTNAME}                          \
+                ${MINION_GRAINS}                               \
                 --link salt --privileged local:salt-minion     &
 
 got_key=0
