@@ -1,0 +1,11 @@
+FROM local:systemd
+
+MAINTAINER Ian Ellis
+
+RUN yum install -y http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-7.noarch.rpm \
+ && yum install -y salt-minion \
+ && echo role: web > /etc/salt/grains \
+ && echo environment: preview >> /etc/salt/grains \
+ && systemctl enable salt-minion
+
+CMD ["/usr/sbin/init"]

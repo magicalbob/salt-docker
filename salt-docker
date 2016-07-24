@@ -1,0 +1,55 @@
+#!/bin/bash
+
+USAGE="Usage: $(basename $0) {minion hostname}"
+
+if [ $# -ne 1 ]
+then
+  echo ${USAGE}
+  exit -1
+fi
+
+MINION_HOSTNAME=${1}
+
+echo "Make sure salt master and minion are not running"
+docker rm -f salt minion 2>/dev/null
+
+echo "Load config"
+source /etc/salt-docker.conf
+
+echo "Start Salt Master"
+docker run --rm --name salt                                       \
+                -v ${SALT_DOCKER_SALT}:/srv/salt                  \
+                -v ${SALT_DOCKER_PILLAR}:/srv/pillar              \
+                -p 5405:5405                                      \
+                -p 5406:5406                                      \
+                local:salt-master > /var/tmp/salt-docker.log 2>&1 &
+
+pause_count=0
+
+until [ ${pause_count} -gt 10 ]
+do
+  echo -n .
+  sleep 1
+  pause_count=$(echo ${pause_count}+1|bc)
+done
+echo ''
+
+echo "Start Salt Minion ${MINION_HOSTNAME}"
+docker run --rm --name minion         \
+                -h ${MINION_HOSTNAME} \
+                --link salt --privileged local:salt-minion     &
+
+got_key=0
+
+echo "Check for salt-key"
+until [ ${got_key} -gt 0 ]
+do
+  echo -n .
+  got_key=$(docker exec salt salt-key -L|grep ${MINION_HOSTNAME}|wc -l)
+  sleep 5
+done
+echo ''
+
+echo "Register minion with master"
+docker exec salt salt-key -Ay
+docker exec salt salt-key -L
