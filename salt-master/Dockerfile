@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/rhel7.2
+FROM centos:7
 
 MAINTAINER Ian Ellis
 
