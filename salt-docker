@@ -28,6 +28,7 @@ docker run --rm --name salt                                       \
                 -v ${SALT_DOCKER_PILLAR}:/srv/pillar              \
                 -p 5405:5405                                      \
                 -p 5406:5406                                      \
+                -e "TZ=Europe/London"                             \
                 local:salt-master > /var/tmp/salt-docker.log 2>&1 &
 
 pause_count=0
@@ -44,6 +45,7 @@ echo "Start Salt Minion ${MINION_HOSTNAME}"
 docker run --rm --name minion                                  \
                 -h ${MINION_HOSTNAME}                          \
                 ${MINION_GRAINS}                               \
+                -e "TZ=Europe/London"                          \
                 --link salt --privileged local:salt-minion     &
 
 got_key=0
