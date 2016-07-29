@@ -12,7 +12,10 @@ Edit docker-compose.yml to set paths of the volume maps, networks etc.
 Running:
 ========
 
+    # Bring up the "machines"
     docker-compose up
+    # Register the salt minion(s) with the salt master
     docker exec saltdocker_salt_1 salt-key -Ay
+    # 
 
 
