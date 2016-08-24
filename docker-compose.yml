@@ -20,8 +20,8 @@ services:
     - "5405:5405"
     - "5406:5406"
     volumes:
-     - "/Users/ian/src/docker/salt-docker/test-salt:/srv/salt"
-     - "/Users/ian/src/docker/salt-docker/test-pillar:/srv/pillar"
+     - "${PWD}/test-salt:/srv/salt"
+     - "${PWD}/test-pillar:/srv/pillar"
     networks:
       test_net:
         ipv4_address: 10.1.1.2
@@ -36,9 +36,9 @@ services:
     links:
     - salt
     volumes:
-     - "/Users/ian/src/docker/salt-docker/test.grains:/etc/salt/grains"
-     - "/Users/ian/src/docker/salt-docker/resolv.conf:/etc/resolv.conf"
-     - "/Users/ian/src/docker/salt-docker/hosts:/etc/hosts"
+     - "${PWD}/test.grains:/etc/salt/grains"
+     - "${PWD}/resolv.conf:/etc/resolv.conf"
+     - "${PWD}/hosts:/etc/hosts"
     networks:
       test_net:
         ipv4_address: 10.1.1.3
