@@ -14,6 +14,8 @@ networks:
 services:
   salt:
     hostname: salt
+    build:
+      context: ./salt-master
     image: local:salt-master
     privileged: true
     ports:
@@ -29,6 +31,8 @@ services:
     - "TZ=Europe/London"
   dt-box-01:
     hostname: dt-box-01
+    build:
+      context: ./salt-minion
     image: local:salt-minion
     privileged: true
     ports:
